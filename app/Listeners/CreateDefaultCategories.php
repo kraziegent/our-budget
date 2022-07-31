@@ -5,8 +5,9 @@ namespace App\Listeners;
 use App\Models\User;
 use App\Actions\Category;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class CreateDefaultCategories
+class CreateDefaultCategories implements ShouldQueue
 {
     /**
      *
