@@ -14,9 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('bank_transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('account_mapping_id')->constrained('account_mappings')->onDelete('cascade');
+            $table->uuid()->primary();
+            $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
+            $table->foreignUuid('account_mapping_id')->constrained('account_mappings', 'uuid')->onDelete('cascade');
+            $table->string('identifier')->nullable();
             $table->json('amount');
             $table->string('payee')->nullable();
             $table->text('description')->nullable();

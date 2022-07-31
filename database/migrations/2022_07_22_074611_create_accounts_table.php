@@ -14,14 +14,14 @@ return new class extends Migration
     public function up()
     {
         Schema::create('accounts', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->uuid()->primary();
+            $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
             $table->string('name');
             $table->char('currency', 3);
             $table->string('type');
             $table->boolean('is_budget')->default(1);
             $table->string('account_number')->nullable();
-            $table->foreignId('account_mapping_id')->nullable()->constrained('account_mappings')->onDelete('cascade');
+            $table->foreignUuid('account_mapping_id')->nullable()->constrained('account_mappings', 'uuid')->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('budget_share', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->uuid()->primary();
+            $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
             $table->string('email');
             $table->string('status');
             $table->timestamps();

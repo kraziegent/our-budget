@@ -14,10 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('master_categories', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->uuid()->primary();
+            $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
             $table->string('name');
             $table->boolean('is_default')->default(0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

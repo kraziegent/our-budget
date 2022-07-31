@@ -14,9 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('category_tags', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
-            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('cascade');
+            $table->uuid()->primary();
+            $table->foreignUuid('user_id')->nullable()->constrained('users', 'uuid')->onDelete('cascade');
+            $table->foreignUuid('category_id')->nullable()->constrained('categories', 'uuid')->onDelete('cascade');
             $table->string('category')->nullable();
             $table->string('tag');
             $table->timestamps();

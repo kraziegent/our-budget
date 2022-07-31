@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('account_mappings', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->uuid()->primary();
+            $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
             $table->string('identifier')->nullable();
             $table->char('currency', 3)->nullable();
             $table->string('account_number')->nullable();
