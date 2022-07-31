@@ -13,6 +13,26 @@ class Category extends Model
     use HasFactory;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
+    protected $fillable = [
+        'user_id',
+        'name',
+        'is_default',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'is_default' => 'boolean',
+    ];
+
+    /**
      * Get the user who owns this account.
      */
     public function owner(): BelongsTo

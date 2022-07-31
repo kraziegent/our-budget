@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -47,4 +48,20 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get user categories
+     */
+    public function categories(): HasMany
+    {
+        return $this->hasMany(Category::class, 'user_id', 'uuid');
+    }
+
+    /**
+     * Get user master categories
+     */
+    public function masterCategories(): HasMany
+    {
+        return $this->hasMany(MasterCategory::class, 'user_id', 'uuid');
+    }
 }
