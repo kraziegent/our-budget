@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->char('currency', 3)->default('NGN');
             $table->rememberToken();
             $table->timestamps();
         });
