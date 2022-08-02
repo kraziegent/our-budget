@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Budget;
 
+use App\Actions\Budget;
 use App\Actions\Category;
 use App\Jobs\MonthlyBudget;
 use App\Models\User;
@@ -13,7 +14,7 @@ class MonthlyBudgetTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_budgets_can_be_created_for_user_categories()
+    public function test_budgets_can_be_auto_created_for_user_categories()
     {
         $user = User::factory()->create();
         $action = app(Category::class);
@@ -61,21 +62,19 @@ class MonthlyBudgetTest extends TestCase
         $user = User::factory()->create();
         $action = app(Category::class);
 
-        $action->store($user, [
+        $category = $action->store($user, [
             'master_category_name' => 'Yearly Bills',
             'name' => 'Rent',
             'is_default' => true,
         ]);
 
-        Bus::dispatch(new MonthlyBudget($user, now()->firstOfMonth()->subMonthNoOverflow()));
+        $budgetAction = app(Budget::class);
+        $budget = $budgetAction->store($user, $category, budgetmonth: now()->firstOfMonth()->subMonthNoOverflow());
 
-        $budget = $user->budgets()->first();
-        $budget->budgeted = makeMoney('50000', 'NGN');
+        $budget->budgeted = makeMoney('50000', $user->currency);
         $budget->save();
 
-        Bus::dispatch(new MonthlyBudget($user));
-
-        $newBudget = $user->budgets()->where('uuid', '<>', $budget->uuid)->first();
+        $newBudget = $budgetAction->store($user, $category);
 
         $this->assertEquals($budget->budgeted, $newBudget->budgeted);
     }
