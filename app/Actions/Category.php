@@ -2,19 +2,21 @@
 
 namespace App\Actions;
 
+use App\Models\Category as CategoryModel;
 use App\Models\User;
 use App\Models\MasterCategory;
+use Illuminate\Support\Facades\DB;
 
 class Category
 {
     /**
      * Store a new category for a user and attach it to a master category
      *
-     * @param App\Models\User $user
+     * @param \App\Models\User $user
      * @param array $data
-     * @param App\Models\MasterCategory $masterCategory
+     * @param \App\Models\MasterCategory $masterCategory
      *
-     * @return App\Models\Category
+     * @return \App\Models\Category
      */
     public function store(User $user, array $data, MasterCategory $masterCategory = null)
     {
@@ -31,6 +33,51 @@ class Category
             'user_id' => $user->uuid,
             'name' => $data['name'],
             'is_default' => $is_default
+        ]);
+    }
+
+    /**
+     * Store multiple categories for a user and attach each to a master category
+     *
+     * @param \App\Models\User $user
+     * @param array $data
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function storeMany(User $user, array $data)
+    {
+        $categories = collect();
+
+        DB::beginTransaction();
+            foreach($data as $value) {
+                if (isset($value['master_category_id']) && $value['master_category_id']) {
+                    $masterCategory = $user->masterCategories()->find($value['master_category_id']);
+
+                    abort_if(! $masterCategory, 404, 'Invalid master category, kindly check the master category.');
+
+                    $category = $this->store($user, $value, $masterCategory);
+                } else {
+                    $category = $this->store($user, $value);
+                }
+
+                $categories->push($category);
+            }
+        DB::commit();
+
+        return $categories;
+    }
+
+    /**
+     * Update a category in the database.
+     *
+     * @param \App\Models\Category $category
+     * @param array $data
+     * @return bool
+     */
+    public function update(CategoryModel $category, array $data)
+    {
+        return $category->update([
+            'name' => $data['name']
         ]);
     }
 }

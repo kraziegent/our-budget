@@ -37,7 +37,7 @@ class Category extends Model
      */
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'uuid');
     }
 
     /**
@@ -45,6 +45,6 @@ class Category extends Model
      */
     public function masterCategory(): BelongsTo
     {
-        return $this->belongsTo(MasterCategory::class);
+        return $this->belongsTo(MasterCategory::class, 'master_category_id', 'uuid');
     }
 }

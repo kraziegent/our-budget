@@ -17,7 +17,22 @@ class CategoryFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'name' => fake()->word(),
+            'is_default' => false
         ];
+    }
+
+    /**
+     * Indicate that the model is a default category
+     *
+     * @return static
+     */
+    public function isdefault()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_default' => true,
+            ];
+        });
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Categories;
+use App\Http\Controllers\Category;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Categories
+    Route::controller(Category::class)->prefix('categories')->group(function () {
+        Route::get('', 'index')->name('categories.index');
+        Route::post('', 'store')->name('categories.store');
+        Route::put('{category}', 'update')->name('categories.update');
+        Route::delete('{category}', 'destroy')->name('categories.destroy');
+    });
+
+    Route::post('categories/store-many', Categories::class)->name('categories.store.many');
 });

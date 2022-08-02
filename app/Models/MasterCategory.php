@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MasterCategory extends Model
@@ -30,6 +31,14 @@ class MasterCategory extends Model
     protected $casts = [
         'is_default' => 'boolean',
     ];
+
+    /**
+     * Get the user who owns this account.
+     */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'uuid');
+    }
 
     /**
      * Get sub categories
