@@ -10,6 +10,16 @@ use App\Models\Account as AccountModel;
 class Account extends Controller
 {
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\Account\StoreRequest  $request
@@ -46,5 +56,16 @@ class Account extends Controller
         }
 
         abort(403, 'Update unsuccesful, we be right back.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\AccountModel $account
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(AccountModel $account)
+    {
+        //
     }
 }
