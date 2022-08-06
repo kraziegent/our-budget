@@ -68,6 +68,6 @@ return [
     ],
 
     "Hidden Categories" => [
-
+        "Opening Balance"
     ],
 ];

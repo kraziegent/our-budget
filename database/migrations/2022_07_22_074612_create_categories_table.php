@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignUuid('master_category_id')->constrained('master_categories', 'uuid');
             $table->string('name');
             $table->boolean('is_default')->default(0);
+            $table->boolean('is_hidden')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

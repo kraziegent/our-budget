@@ -56,14 +56,14 @@ class Category extends Controller
     {
         $validated = $request->validated();
 
-        if($action->update($category, $validated)) {
+        if($updated = $action->update($category, $validated)) {
             return response()->json([
                 'status' => 'success',
-                'data' => $category
+                'data' => $updated
             ]);
         }
 
-        return response()->json([], 422);
+        abort(403, 'Update unsuccesful, we be right back.');
     }
 
     /**

@@ -30,6 +30,7 @@ class Category extends Model
      */
     protected $casts = [
         'is_default' => 'boolean',
+        'is_hidden' => 'boolean',
     ];
 
     /**

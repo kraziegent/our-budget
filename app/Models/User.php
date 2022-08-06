@@ -72,4 +72,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Budget::class, 'user_id', 'uuid');
     }
+
+    /**
+     * Get user budgets
+     */
+    public function accounts(): HasMany
+    {
+        return $this->hasMany(Account::class, 'user_id', 'uuid');
+    }
 }

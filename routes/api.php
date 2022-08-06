@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Account;
 use App\Http\Controllers\Categories;
 use App\Http\Controllers\Category;
 use Illuminate\Support\Facades\Route;
@@ -25,4 +26,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::post('categories/store-many', Categories::class)->name('categories.store.many');
+
+    // Accounts
+    Route::controller(Account::class)->prefix('accounts')->group(function() {
+        Route::get('', 'index')->name('accounts.index');
+        Route::post('', 'store')->name('accounts.store');
+        Route::put('{account}', 'update')->name('accounts.update');
+        Route::delete('{account}', 'destroy')->name('accounts.destroy');
+    });
 });

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\MoneyCast;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,34 @@ class Transaction extends Model
 {
     use Uuids;
     use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
+    protected $fillable = [
+        'user_id',
+        'account_id',
+        'category_id',
+        'transfer_account_id',
+        'payee_id',
+        'amount',
+        'is_cleared',
+        'transaction_date',
+        'description',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'amount' => MoneyCast::class,
+        'is_cleared' => 'boolean',
+        'transaction_date' => 'datetime',
+    ];
 
     /**
      * Get the user who owns this account.

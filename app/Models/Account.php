@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AccountType;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,11 +15,34 @@ class Account extends Model
     use HasFactory;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
+    protected $fillable = [
+        'name',
+        'currency',
+        'type',
+        'is_budget',
+        'account_number',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'is_budget' => 'boolean',
+        'type' => AccountType::class,
+    ];
+
+    /**
      * Get the user who owns this account.
      */
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'uuid');
     }
 
     /**
@@ -26,7 +50,7 @@ class Account extends Model
      */
     public function transactions(): HasMany
     {
-        return $this->hasMany(Transaction::class);
+        return $this->hasMany(Transaction::class, 'account_id', 'uuid');
     }
 
     /**

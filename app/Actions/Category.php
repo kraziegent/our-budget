@@ -32,7 +32,8 @@ class Category
         return $masterCategory->categories()->firstOrCreate([
             'user_id' => $user->uuid,
             'name' => $data['name'],
-            'is_default' => $is_default
+            'is_default' => $is_default,
+            'is_hidden' => $masterCategory->name === 'Hidden Categories' ? true : false,
         ]);
     }
 
@@ -72,12 +73,18 @@ class Category
      *
      * @param \App\Models\Category $category
      * @param array $data
-     * @return bool
+     * @return \App\Models\Category|null
      */
     public function update(CategoryModel $category, array $data)
     {
-        return $category->update([
-            'name' => $data['name']
-        ]);
+        if (isset($data['name'])) {
+            $category->name = $data['name'];
+        }
+
+        if ($category->save()) {
+            return $category;
+        }
+
+        return null;
     }
 }
