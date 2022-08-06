@@ -80,4 +80,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Account::class, 'user_id', 'uuid');
     }
+
+    /**
+     * Get user payees
+     */
+    public function payees(): HasMany
+    {
+        return $this->hasMany(Payee::class, 'user_id', 'uuid');
+    }
 }

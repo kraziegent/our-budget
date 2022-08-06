@@ -3,6 +3,7 @@
 use App\Http\Controllers\Account;
 use App\Http\Controllers\Categories;
 use App\Http\Controllers\Category;
+use App\Http\Controllers\Payee;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,5 +34,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('', 'store')->name('accounts.store');
         Route::put('{account}', 'update')->name('accounts.update');
         Route::delete('{account}', 'destroy')->name('accounts.destroy');
+    });
+
+    // Payees
+    Route::controller(Payee::class)->prefix('payees')->group(function() {
+        Route::get('', 'index')->name('payees.index');
+        Route::post('', 'store')->name('payees.store');
+        Route::put('{payee}', 'update')->name('payees.update');
+        Route::delete('{payee}', 'destroy')->name('payees.destroy');
     });
 });

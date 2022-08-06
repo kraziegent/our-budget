@@ -36,7 +36,7 @@ class UpdateAccountTest extends TestCase
         ]);
     }
 
-    public function test_different_user_cannot_update_another_users_category()
+    public function test_different_user_cannot_update_another_users_account()
     {
         $user = User::factory()->create();
         $account = Account::factory()->for($user, 'owner')->create();
