@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Account;
 
-use App\Rules\IsAllowedType;
+use App\Rules\IsAllowedAccountType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest
@@ -27,7 +27,7 @@ class UpdateRequest extends FormRequest
         return [
             'name' => ['sometimes', 'nullable', 'string'],
             'currency' => ['sometimes', 'nullable', 'string'],
-            'type' => ['sometimes', 'nullable', new IsAllowedType],
+            'type' => ['sometimes', 'nullable', new IsAllowedAccountType],
             'is_budget' => ['sometimes', 'nullable', 'boolean'],
             'account_number' => ['sometimes', 'nullable', 'string'],
         ];

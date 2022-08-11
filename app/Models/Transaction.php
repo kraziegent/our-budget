@@ -19,6 +19,7 @@ class Transaction extends Model
      * @var array<string>
      */
     protected $fillable = [
+        'type',
         'user_id',
         'account_id',
         'category_id',
@@ -38,7 +39,8 @@ class Transaction extends Model
     protected $casts = [
         'amount' => MoneyCast::class,
         'is_cleared' => 'boolean',
-        'transaction_date' => 'datetime',
+        'is_checked' => 'boolean',
+        'transaction_date' => 'date',
     ];
 
     /**
@@ -46,7 +48,7 @@ class Transaction extends Model
      */
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'uuid');
     }
 
     /**
@@ -54,7 +56,7 @@ class Transaction extends Model
      */
     public function account(): BelongsTo
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(Account::class, 'account_id', 'uuid');
     }
 
     /**
@@ -62,7 +64,7 @@ class Transaction extends Model
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id', 'uuid');
     }
 
     /**
@@ -70,6 +72,6 @@ class Transaction extends Model
      */
     public function payee(): BelongsTo
     {
-        return $this->belongsTo(Payee::class);
+        return $this->belongsTo(Payee::class, 'payee_id', 'uuid');
     }
 }

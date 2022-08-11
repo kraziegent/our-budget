@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\TransactionType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,11 @@ class TransactionFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'amount' => makeMoney('5000', 'NGN'),
+            'type' => fake()->randomElement(TransactionType::cases()),
+            'is_cleared' => fake()->boolean(),
+            'transaction_date' => now(),
+            'description' => fake()->sentence(),
         ];
     }
 }

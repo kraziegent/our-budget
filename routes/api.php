@@ -4,6 +4,8 @@ use App\Http\Controllers\Account;
 use App\Http\Controllers\Categories;
 use App\Http\Controllers\Category;
 use App\Http\Controllers\Payee;
+use App\Http\Controllers\Transaction;
+use App\Http\Controllers\Transactions;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,4 +45,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('{payee}', 'update')->name('payees.update');
         Route::delete('{payee}', 'destroy')->name('payees.destroy');
     });
+
+    // Transactions
+    Route::controller(Transaction::class)->prefix('transactions')->group(function() {
+        Route::get('', 'index')->name('transactions.index');
+        Route::post('', 'store')->name('transactions.store');
+        Route::put('{transaction}', 'update')->name('transactions.update');
+        Route::delete('{transaction}', 'destroy')->name('transactions.destroy');
+    });
+
+    Route::post('transactions/store-many', Transactions::class)->name('transactions.store.many');
 });

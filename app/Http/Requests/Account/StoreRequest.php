@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Account;
 
-use App\Rules\IsAllowedType;
+use App\Rules\IsAllowedAccountType;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRequest extends FormRequest
@@ -27,7 +27,7 @@ class StoreRequest extends FormRequest
         return [
             'name' => ['required', 'string'],
             'currency' => ['required', 'string'],
-            'type' => ['required', new IsAllowedType],
+            'type' => ['required', new IsAllowedAccountType],
             'is_budget' => ['required', 'boolean'],
             'account_number' => ['sometimes', 'nullable', 'string'],
             'opening_balance' => ['sometimes', 'nullable', 'numeric'],

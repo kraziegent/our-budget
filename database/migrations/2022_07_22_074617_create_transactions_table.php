@@ -20,8 +20,10 @@ return new class extends Migration
             $table->foreignUuid('category_id')->nullable()->constrained('categories', 'uuid')->onDelete('set null');
             $table->foreignUuid('transfer_account_id')->nullable()->constrained('accounts', 'uuid')->onDelete('cascade');
             $table->foreignUuid('payee_id')->nullable()->constrained('payees', 'uuid')->onDelete('set null');
+            $table->string('type');
             $table->json('amount');
             $table->boolean('is_cleared')->default(0);
+            $table->boolean('is_checked')->default(0);
             $table->date('transaction_date');
             $table->text('description')->nullable();
             $table->softDeletes();

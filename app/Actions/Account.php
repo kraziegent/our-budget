@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Enums\TransactionType;
 use App\Jobs\DefaultCategories;
 use App\Models\Account as AccountModel;
 use App\Models\User;
@@ -38,6 +39,7 @@ class Account
                 'category_id' => $category->uuid,
                 'amount' => makeMoney($data['opening_balance'], $account->currency),
                 'is_cleared' => true,
+                'type' => TransactionType::Credit,
                 'transaction_date' => now(),
                 'description' => 'Opening Balance',
             ]);

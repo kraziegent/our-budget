@@ -88,4 +88,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Payee::class, 'user_id', 'uuid');
     }
+
+    /**
+     * Get user transactions
+     */
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class, 'user_id', 'uuid');
+    }
 }

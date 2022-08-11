@@ -5,7 +5,7 @@ namespace App\Rules;
 use App\Enums\AccountType;
 use Illuminate\Contracts\Validation\Rule;
 
-class IsAllowedType implements Rule
+class IsAllowedAccountType implements Rule
 {
     /**
      * Determine if the validation rule passes.
