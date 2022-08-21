@@ -17,6 +17,7 @@ return new class extends Migration
             $table->uuid()->primary();
             $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
             $table->foreignUuid('account_id')->constrained('accounts', 'uuid')->onDelete('cascade');
+            $table->foreignUuid('budget_id')->constrained('budgets', 'uuid')->onDelete('cascade');
             $table->foreignUuid('category_id')->nullable()->constrained('categories', 'uuid')->onDelete('set null');
             $table->foreignUuid('transfer_account_id')->nullable()->constrained('accounts', 'uuid')->onDelete('cascade');
             $table->foreignUuid('payee_id')->nullable()->constrained('payees', 'uuid')->onDelete('set null');
@@ -28,6 +29,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->softDeletes();
             $table->timestamps();
+
+            // $table->index(['user_id', 'account_id', 'budget_id', 'category_id', 'payee_id', 'transfer_account_id']);
         });
     }
 

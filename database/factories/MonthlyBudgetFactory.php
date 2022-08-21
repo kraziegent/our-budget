@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Enums\BudgetStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Budget>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MonthlyBudget>
  */
-class BudgetFactory extends Factory
+class MonthlyBudgetFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,8 +17,7 @@ class BudgetFactory extends Factory
     public function definition()
     {
         return [
-            'name' => fake()->name(),
-            'status' => fake()->randomElement(BudgetStatus::cases()),
+            //
         ];
     }
 }

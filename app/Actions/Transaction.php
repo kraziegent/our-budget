@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Models\Budget;
 use App\Models\User;
 use App\Models\Transaction as TransactionModel;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ class Transaction
      * @param array $data
      * @return \App\Models\Transaction
      */
-    public function store(User $user, array $data)
+    public function store(User $user, array $data, Budget $budget = null)
     {
         $account = $user->accounts()->find($data['account_id']);
 
@@ -34,6 +35,16 @@ class Transaction
             ]);
         }
 
+        if (! $budget) {
+            $budget = $user->budgets()->find($data['budget_id']);
+
+            if (! $budget) {
+                throw ValidationException::withMessages([
+                    'budget_id' => 'Seems we were unable to find this budget for the user!'
+                ]);
+            }
+        }
+
         $is_cleared = isset($data['is_cleared']) ? $data['is_cleared'] : false;
         $transaction_date = isset($date['transaction_date']) ? $date['transaction_date'] : now();
 
@@ -44,6 +55,7 @@ class Transaction
         }
 
         $transaction = $user->transactions()->create([
+            'budget_id' => $budget->uuid,
             'category_id' => $category->uuid,
             'account_id' => $account->uuid,
             'payee_id' => $payee_id,
@@ -66,11 +78,19 @@ class Transaction
      */
     public function storeMany(User $user, array $data)
     {
+        $budget = $user->budgets()->find($data['budget_id']);
+
+        if (! $budget) {
+            throw ValidationException::withMessages([
+                'budget_id' => 'Seems we were unable to find this budget for the user!'
+            ]);
+        }
+
         $transactions = collect();
 
         DB::beginTransaction();
-            foreach($data as $value) {
-                $transaction = $this->store($user, $value);
+            foreach($data['transactions'] as $value) {
+                $transaction = $this->store($user, $value, $budget);
 
                 $transactions->push($transaction);
             }

@@ -8,6 +8,7 @@ use App\Models\Payee;
 use App\Models\Account;
 use App\Models\Category;
 use App\Enums\TransactionType;
+use App\Models\Budget;
 use App\Models\MasterCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -20,10 +21,12 @@ class SavingTransactionTest extends TestCase
         $user = User::factory()->create();
         $payee = Payee::factory()->for($user, 'owner')->create();
         $account = Account::factory()->for($user, 'owner')->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
 
         $response = $this->actingAs($user)->postJson(route('transactions.store'), [
+            'budget_id' => $budget->uuid,
             'category_id' => $category->uuid,
             'amount' => 5000,
             'payee_id' => $payee->uuid,
@@ -50,10 +53,12 @@ class SavingTransactionTest extends TestCase
         $user = User::factory()->create();
         $payee = Payee::factory()->for($user, 'owner')->create();
         $account = Account::factory()->for($user, 'owner')->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
 
         $response = $this->actingAs($user)->postJson(route('transactions.store'), [
+            'budget_id' => $budget->uuid,
             'category_id' => $category->uuid,
             'payee_id' => $payee->uuid,
             'account_id' => $account->uuid,
@@ -89,10 +94,12 @@ class SavingTransactionTest extends TestCase
     {
         $user = User::factory()->create();
         $payee = Payee::factory()->for($user, 'owner')->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
 
         $response = $this->actingAs($user)->postJson(route('transactions.store'), [
+            'budget_id' => $budget->uuid,
             'category_id' => $category->uuid,
             'amount' => 5000,
             'payee_id' => $payee->uuid,
@@ -109,10 +116,12 @@ class SavingTransactionTest extends TestCase
     {
         $user = User::factory()->create();
         $account = Account::factory()->for($user, 'owner')->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
 
         $response = $this->actingAs($user)->postJson(route('transactions.store'), [
+            'budget_id' => $budget->uuid,
             'category_id' => $category->uuid,
             'amount' => 5000,
             'account_id' => $account->uuid,
@@ -130,10 +139,12 @@ class SavingTransactionTest extends TestCase
         $user = User::factory()->create();
         $payee = Payee::factory()->for($user, 'owner')->create();
         $account = Account::factory()->for($user, 'owner')->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
 
         $response = $this->actingAs($user)->postJson(route('transactions.store'), [
+            'budget_id' => $budget->uuid,
             'category_id' => $category->uuid,
             'amount' => 5000,
             'payee_id' => $payee->uuid,

@@ -1,9 +1,10 @@
 <?php
 
-namespace Tests\Feature\Category;
+namespace Tests\Feature\Transaction;
 
 use App\Enums\TransactionType;
 use App\Models\Account;
+use App\Models\Budget;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Category;
@@ -21,12 +22,14 @@ class UpdateTransactionTest extends TestCase
         $user = User::factory()->create();
         $payee = Payee::factory()->for($user, 'owner')->create();
         $account = Account::factory()->for($user, 'owner')->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
 
         $transaction = Transaction::factory()
                                     ->for($user, 'owner')
                                     ->for($payee)
+                                    ->for($budget)
                                     ->for($account)
                                     ->for($category)
                                     ->create();
@@ -51,11 +54,13 @@ class UpdateTransactionTest extends TestCase
         $user = User::factory()->create();
         $payee = Payee::factory()->for($user, 'owner')->create();
         $account = Account::factory()->for($user, 'owner')->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
         $transaction = Transaction::factory()
                                     ->for($user, 'owner')
                                     ->for($payee)
+                                    ->for($budget)
                                     ->for($account)
                                     ->for($category)
                                     ->create();

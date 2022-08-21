@@ -2,76 +2,91 @@
 
 namespace App\Actions;
 
-use App\Models\Budget as BudgetModel;
-use App\Models\Category;
 use App\Models\User;
-use Carbon\Carbon;
+use App\Enums\BudgetStatus;
+use App\Enums\SharedBudgetStatus;
+use App\Models\Budget as BudgetModel;
+use Illuminate\Validation\ValidationException;
 
 class Budget
 {
 
-    /**
-     * Create a budget for the user for a category.
-     *
-     * @param \App\Models\User $user
-     * @param \App\Models\Category $category
-     * @param mixed $budgeted
-     * @param \Carbon\Carbon $budgetmonth
-     *
-     * @return \App\Models\Budget
-     */
-    public function store(User $user, Category $category, mixed $budgeted = null, Carbon $budgetmonth = null)
+    public function store(User $user, array $data)
     {
-        $budgetmonth = optional($budgetmonth)->firstOfMonth() ?? now()->firstOfMonth();
-        $period = strtolower($budgetmonth->monthName);
+        $is_default = !isset($data['is_default']) ? false : $data['is_default'];
+        $status = !isset($data['status']) ? BudgetStatus::Active : $data['status'];
 
-        if (
-            $budget = $user->budgets()->where('category_id', $category->uuid)
-            ->where('budget_month', $budgetmonth)
-            ->where('period', $period)
-            ->first()
-            )
-        {
-            if(! $budgeted) {
-                return $budget;
-            }
-
-            return $this->update($budget, $budgeted);
+        if ($is_default) {
+            $user->budgets()->where('is_default', true)->update(['is_default' => false]);
         }
 
-        if (! $budgeted) {
-            $previousbudgets = $user->budgets()->whereDate('budget_month', $budgetmonth->subMonthNoOverflow())->get();
-            $budgetmonth->addMonthNoOverflow();
-
-            if ($previousBudget = $previousbudgets->where('category_id', $category->uuid)->first()) {
-                $budgeted = $previousBudget->budgeted;
-            } else {
-                $budgeted = makeMoney('0', $user->currency);
-            }
-        } else {
-            $budgeted = makeMoney($budgeted, $user->currency);
-        }
-
-        return $user->budgets()->create([
-            'category_id' => $category->uuid,
-            'budget_month' => $budgetmonth,
-            'period' => $period,
-            'budgeted' => $budgeted,
+        $budget = $user->budgets()->create([
+            'name' => $data['name'],
+            'status' => $status,
+            'is_default' => $is_default,
         ]);
-    }
-
-    /**
-     * Update a budget value for a month
-     *
-     * @param \App\Models\Budget $budget
-     * @param mixed budgeted
-     * @return \App\Models\Budget
-     */
-    public function update(BudgetModel $budget, mixed $budgeted)
-    {
-        $budget->budgeted = makeMoney($budgeted, $budget->owner->currency);
-        $budget->save();
 
         return $budget;
+    }
+
+    public function update(BudgetModel $budget, array $data)
+    {
+        if (isset($data['name'])) {
+            $budget->name = $data['name'];
+        }
+
+        if (isset($data['status'])) {
+            $budget->status = $data['status'];
+        }
+
+        if (isset($data['is_default'])) {
+            $user = $budget->owner;
+
+            if ($data['is_default']) {
+                $user->budgets()->where('is_default', true)->where('uuid', '<>', $budget->uuid)->update(['is_default' => false]);
+                $budget->is_default = $data['is_default'];
+            }
+
+            if (!$data['is_default']) {
+                if ($user->budgets()->where('is_default', true)->count() == 1 && $budget->is_default) {
+                    throw ValidationException::withMessages([
+                        'is_default' => 'User must have at least 1 default budget!'
+                    ]);
+                }
+
+                $budget->is_default = $data['is_default'];
+            }
+        }
+
+        if($budget->save()) {
+            return $budget;
+        }
+
+        return null;
+    }
+
+    public function share(BudgetModel $budget, array $data)
+    {
+        try {
+            $user = User::firstOrCreate([
+                'email' => $data['email'],
+            ]);
+        } catch(\Throwable $e) {
+
+        }
+
+        $status = isset($data['status']) ? $data['status'] : SharedBudgetStatus::Active;
+
+        $shared = $budget->share()->create([
+            'user_id' => $user->uuid,
+            'status' => $status,
+        ]);
+
+        return $shared;
+    }
+
+    public function unShare(BudgetModel $budget, User $user)
+    {
+
     }
 }

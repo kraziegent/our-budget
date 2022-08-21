@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use App\Casts\MoneyCast;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class MasterCategory extends Model
+class MonthlyBudget extends Model
 {
     use Uuids;
     use HasFactory;
@@ -19,9 +19,11 @@ class MasterCategory extends Model
      * @var array<string>
      */
     protected $fillable = [
-        'name',
-        'is_default',
         'budget_id',
+        'category_id',
+        'budget_month',
+        'period',
+        'budgeted',
     ];
 
     /**
@@ -30,7 +32,7 @@ class MasterCategory extends Model
      * @var array
      */
     protected $casts = [
-        'is_default' => 'boolean',
+        'budgeted' => MoneyCast::class,
     ];
 
     /**
@@ -38,22 +40,14 @@ class MasterCategory extends Model
      */
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'uuid');
+        return $this->belongsTo(User::class);
     }
 
     /**
-     * Get the budget the mastercategory is created for.
+     * Get the category the budget is for.
      */
-    public function budget(): BelongsTo
+    public function category(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'budget_id', 'uuid');
-    }
-
-    /**
-     * Get sub categories
-     */
-    public function categories(): HasMany
-    {
-        return $this->hasMany(Category::class, 'master_category_id', 'uuid');
+        return $this->belongsTo(Category::class);
     }
 }

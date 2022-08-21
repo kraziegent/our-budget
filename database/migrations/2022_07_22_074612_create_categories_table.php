@@ -16,8 +16,10 @@ return new class extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->uuid()->primary();
             $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
+            $table->foreignUuid('budget_id')->constrained('budgets', 'uuid')->onDelete('cascade');
             $table->foreignUuid('master_category_id')->constrained('master_categories', 'uuid');
             $table->string('name');
+            $table->string('service')->nullable();
             $table->boolean('is_default')->default(0);
             $table->boolean('is_hidden')->default(0);
             $table->softDeletes();

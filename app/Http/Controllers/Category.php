@@ -6,6 +6,7 @@ use App\Actions\Category as CategoryAction;
 use App\Http\Requests\Category\StoreRequest;
 use App\Http\Requests\Category\UpdateRequest;
 use App\Models\Category as CategoryModel;
+use Illuminate\Validation\ValidationException;
 
 class Category extends Controller
 {
@@ -28,15 +29,22 @@ class Category extends Controller
     public function store(StoreRequest $request, CategoryAction $action)
     {
         $validated = $request->validated();
+        $budget = $request->user()->budgets()->find($validated['budget_id']);
+
+        if (! $budget) {
+            throw ValidationException::withMessages([
+                'budget_id' => 'Seems we were unable to find this budget for the user!'
+            ]);
+        }
 
         if (isset($validated['master_category_id']) && $validated['master_category_id']) {
             $masterCategory = $request->user()->masterCategories()->find($validated['master_category_id']);
 
             abort_if(! $masterCategory, 404, 'Invalid master category, kindly check the master category.');
 
-            $category = $action->store($request->user(), $validated, $masterCategory);
+            $category = $action->store($request->user(), $budget, $validated, $masterCategory);
         } else {
-            $category = $action->store($request->user(), $validated);
+            $category = $action->store($request->user(), $budget, $validated);
         }
 
         return response()->json([

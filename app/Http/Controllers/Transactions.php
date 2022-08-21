@@ -11,7 +11,7 @@ class Transactions extends Controller
     {
         $validated = $request->validated();
 
-        $transactions = $action->storeMany($request->user(), $validated['transactions']);
+        $transactions = $action->storeMany($request->user(), $validated);
 
         return response()->json([
             'status' => 'success',

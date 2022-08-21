@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Category;
 
+use App\Models\Budget;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\MasterCategory;
@@ -14,9 +15,11 @@ class SavingMultipleCategoryTest extends TestCase
     public function test_multiple_categories_can_be_created_with_master_category_name_or_id()
     {
         $user = User::factory()->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
 
         $response = $this->actingAs($user)->postJson(route('categories.store.many'), [
+            'budget_id' => $budget->uuid,
             'categories' => [
                 ['name' => 'Rent', 'master_category_name' => 'Yearly Bills'],
                 ['name' => 'Medical', 'master_category_id' => $mastercategory->uuid]

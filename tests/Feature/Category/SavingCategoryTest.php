@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Category;
 
+use App\Models\Budget;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Category;
@@ -15,9 +16,11 @@ class SavingCategoryTest extends TestCase
     public function test_single_category_can_be_saved_using_master_category_name()
     {
         $user = User::factory()->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
 
         $response = $this->actingAs($user)->postJson(route('categories.store'), [
             'name' => 'Rent',
+            'budget_id' => $budget->uuid,
             'master_category_id' => null,
             'master_category_name' => 'Yearly Bills'
         ]);
@@ -38,10 +41,12 @@ class SavingCategoryTest extends TestCase
     public function test_single_category_can_be_saved_using_master_category_id()
     {
         $user = User::factory()->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($user, 'owner')->for($budget, 'budget')->create();
 
         $response = $this->actingAs($user)->postJson(route('categories.store'), [
             'name' => 'Rent',
+            'budget_id' => $budget->uuid,
             'master_category_id' => $mastercategory->uuid,
             'master_category_name' => null
         ]);
@@ -79,11 +84,13 @@ class SavingCategoryTest extends TestCase
     public function test_category_cannot_be_created_twice()
     {
         $user = User::factory()->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
 
         $response = $this->actingAs($user)->postJson(route('categories.store'), [
             'name' => $category->name,
+            'budget_id' => $budget->uuid,
             'master_category_id' => $mastercategory->uuid,
             'master_category_name' => null
         ]);

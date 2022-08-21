@@ -3,6 +3,8 @@
 namespace Tests\Feature\Account;
 
 use App\Enums\AccountType;
+use App\Enums\BudgetStatus;
+use App\Models\Budget;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -37,6 +39,10 @@ class SavingAccountTest extends TestCase
     public function test_a_new_account_can_be_saved_with_opening_balance()
     {
         $user = User::factory()->create();
+        Budget::factory()->for($user, 'owner')->create([
+            'is_default' => true,
+            'status' => BudgetStatus::Active,
+        ]);
 
         $response = $this->actingAs($user)->postJson(route('accounts.store'), [
             'name' => 'Savings Account',

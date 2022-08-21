@@ -2,11 +2,13 @@
 
 namespace App\Actions;
 
+use App\Enums\BudgetStatus;
+use App\Models\User;
 use App\Enums\TransactionType;
 use App\Jobs\DefaultCategories;
 use App\Models\Account as AccountModel;
-use App\Models\User;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Validation\ValidationException;
 
 class Account
 {
@@ -28,8 +30,16 @@ class Account
         ]);
 
         if (isset($data['opening_balance'])) {
+            $budget = $user->budgets()->where('is_default', true)->where('status', BudgetStatus::Active)->first();
+
+            if (! $budget) {
+                throw ValidationException::withMessages([
+                    'budget_id' => 'Seems like you jumped the gun somewhere, kindly create a budget to continue.'
+                ]);
+            }
+
             if (! $category = $user->categories()->where('name', 'Opening Balance')->first()) {
-                Bus::dispatchSync(new DefaultCategories($user));
+                Bus::dispatchSync(new DefaultCategories($user, $budget));
 
                 $category = $user->categories()->where('name', 'Opening Balance')->first();
             }
@@ -37,6 +47,7 @@ class Account
             $account->transactions()->create([
                 'user_id' => $user->uuid,
                 'category_id' => $category->uuid,
+                'budget_id' => $budget->uuid,
                 'amount' => makeMoney($data['opening_balance'], $account->currency),
                 'is_cleared' => true,
                 'type' => TransactionType::Credit,

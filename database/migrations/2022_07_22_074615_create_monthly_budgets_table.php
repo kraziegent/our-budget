@@ -13,12 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('master_categories', function (Blueprint $table) {
+        Schema::create('monthly_budgets', function (Blueprint $table) {
             $table->uuid()->primary();
             $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
             $table->foreignUuid('budget_id')->constrained('budgets', 'uuid')->onDelete('cascade');
-            $table->string('name');
-            $table->boolean('is_default')->default(0);
+            $table->foreignUuid('category_id')->constrained('categories', 'uuid');
+            $table->json('budgeted')->nullable();
+            $table->json('overflow')->nullable();
+            $table->boolean('allow_overspending')->default(1);
+            $table->string('period');
+            $table->date('budget_month');
+            $table->json('target')->nullable();
+            $table->json('frequency')->nullable(); // type, recurrence, recurrence date, start_date, next_run_date
             $table->softDeletes();
             $table->timestamps();
         });
@@ -31,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('master_categories');
+        Schema::dropIfExists('monthly_budgets');
     }
 };

@@ -3,18 +3,18 @@
 namespace App\Listeners;
 
 use App\Models\User;
-use App\Actions\Category;
+use App\Actions\Budget;
 use App\Jobs\DefaultCategories;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Bus;
 
-class CreateDefaultCategories implements ShouldQueue
+class NewUserSetup implements ShouldQueue
 {
     /**
      *
      */
-    public function __construct(Category $action)
+    public function __construct(Budget $action)
     {
         $this->action = $action;
     }
@@ -28,7 +28,8 @@ class CreateDefaultCategories implements ShouldQueue
     public function handle(Registered $event)
     {
         if ($event->user instanceof User && $event->user->categories()->where('is_default', true)->count() == 0) {
-            Bus::dispatch(new DefaultCategories($event->user));
+            $budget = $this->action->store($event->user, ['name' => 'Budget']);
+            Bus::dispatch(new DefaultCategories($event->user, $budget));
         }
     }
 }

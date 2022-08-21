@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\User;
 use App\Actions\Category;
+use App\Models\Budget;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,14 +19,18 @@ class DefaultCategories implements ShouldQueue
     /**@var \App\Models\User */
     private $user;
 
+    /**@var \App\Models\Budget */
+    private $budget;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct(User $user, Budget $budget)
     {
         $this->user = $user;
+        $this->budget = $budget;
     }
 
     /**
@@ -46,10 +51,11 @@ class DefaultCategories implements ShouldQueue
                         'is_default' => true,
                     ];
 
-                    $action->store($this->user, $data);
+                    $action->store($this->user, $this->budget, $data);
                 }
             } else {
                 $this->user->masterCategories()->firstOrCreate([
+                    'budget_id' => $this->budget->uuid,
                     'name' => $master_category,
                     'is_default' => true,
                 ]);

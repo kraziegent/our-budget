@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Category;
 
+use App\Models\Budget;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Category;
@@ -15,8 +16,9 @@ class UpdateCategoryTest extends TestCase
     public function test_category_can_be_updated()
     {
         $user = User::factory()->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
 
         $response = $this->actingAs($user)->putJson(route('categories.update', $category), [
             'name' => 'Rent',
@@ -35,8 +37,9 @@ class UpdateCategoryTest extends TestCase
     public function test_name_is_required_to_update_category()
     {
         $user = User::factory()->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
 
         $response = $this->actingAs($user)->putJson(route('categories.update', $category), [
 
@@ -53,8 +56,9 @@ class UpdateCategoryTest extends TestCase
     public function test_different_user_cannot_update_another_users_category()
     {
         $user = User::factory()->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
         $otherUser = User::factory()->create();
 
         $response = $this->actingAs($otherUser)->putJson(route('categories.update', $category), [

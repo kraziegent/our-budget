@@ -74,7 +74,31 @@ class User extends Authenticatable
     }
 
     /**
-     * Get user budgets
+     * Get budgets shared with user
+     */
+    public function shared()
+    {
+        return $this->hasMany(SharedBudget::class, 'user_id', 'uuid');
+    }
+
+    /**
+     * Get budgets shared with other users
+     */
+    public function share()
+    {
+        return $this->hasManyThrough(SharedBudget::class, Budget::class, 'user_id', 'budget_id', 'uuid', 'uuid');
+    }
+
+    /**
+     * Get user monthly budgets
+     */
+    public function monthlyBudgets(): HasMany
+    {
+        return $this->hasMany(MonthlyBudget::class, 'user_id', 'uuid');
+    }
+
+    /**
+     * Get user accounts
      */
     public function accounts(): HasMany
     {

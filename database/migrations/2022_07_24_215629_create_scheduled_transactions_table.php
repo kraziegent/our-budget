@@ -22,9 +22,7 @@ return new class extends Migration
             $table->foreignUuid('payee_id')->nullable()->constrained('payees', 'uuid')->onDelete('set null');
             $table->json('amount');
             $table->text('description')->nullable();
-            $table->string('frequency');
-            $table->date('start_date');
-            $table->date('next_run_date');
+            $table->json('frequency'); // type, recurrence, start_date, next_run_date
             $table->softDeletes();
             $table->timestamps();
         });

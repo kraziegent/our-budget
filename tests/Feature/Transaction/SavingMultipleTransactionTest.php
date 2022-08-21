@@ -9,6 +9,7 @@ use App\Models\Account;
 use App\Models\Category;
 use App\Models\MasterCategory;
 use App\Enums\TransactionType;
+use App\Models\Budget;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class SavingMultipleTransactionTest extends TestCase
@@ -20,10 +21,12 @@ class SavingMultipleTransactionTest extends TestCase
         $user = User::factory()->create();
         $payee = Payee::factory()->for($user, 'owner')->create();
         $account = Account::factory()->for($user, 'owner')->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
 
         $response = $this->actingAs($user)->postJson(route('transactions.store.many'), [
+            'budget_id' => $budget->uuid,
             'transactions' => [
                 [
                     'category_id' => $category->uuid,
@@ -59,8 +62,9 @@ class SavingMultipleTransactionTest extends TestCase
         $user = User::factory()->create();
         $payee = Payee::factory()->for($user, 'owner')->create();
         $account = Account::factory()->for($user, 'owner')->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
 
         $response = $this->actingAs($user)->postJson(route('transactions.store.many'), [
             'transactions' => [
@@ -94,8 +98,9 @@ class SavingMultipleTransactionTest extends TestCase
         $user = User::factory()->create();
         $payee = Payee::factory()->for($user, 'owner')->create();
         $account = Account::factory()->for($user, 'owner')->create();
-        $mastercategory = MasterCategory::factory()->for($user, 'owner')->create();
-        $category = Category::factory()->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
+        $budget = Budget::factory()->for($user, 'owner')->create();
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        $category = Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->create();
 
         $response = $this->actingAs($user)->postJson(route('transactions.store.many'), [
             'transactions' => [

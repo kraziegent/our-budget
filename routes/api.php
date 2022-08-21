@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\Account;
+use App\Http\Controllers\Budget;
 use App\Http\Controllers\Categories;
 use App\Http\Controllers\Category;
 use App\Http\Controllers\Payee;
 use App\Http\Controllers\Transaction;
 use App\Http\Controllers\Transactions;
+use App\Http\Controllers\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +22,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    // User
+    Route::controller(User::class)->prefix('user')->group(function() {
+        Route::get('{user?}', 'show')->name('user.show');
+        Route::put('{user?}', 'update')->name('user.update');
+        Route::delete('{user?}', 'destroy')->name('user.destroy');
+    });
+
     // Categories
     Route::controller(Category::class)->prefix('categories')->group(function () {
         Route::get('', 'index')->name('categories.index');
@@ -55,4 +64,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::post('transactions/store-many', Transactions::class)->name('transactions.store.many');
+
+    // Budgets
+    Route::controller(Budget::class)->prefix('budgets')->group(function() {
+        Route::get('', 'index')->name('budgets.index');
+        Route::post('', 'store')->name('budgets.store');
+        Route::post('{budget}/share', 'share')->name('budgets.share');
+        Route::put('{budget}', 'update')->name('budgets.update');
+        Route::delete('{budget}', 'destroy')->name('budgets.destroy');
+    });
 });

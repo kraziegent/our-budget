@@ -26,6 +26,7 @@ class StoreManyRequest extends FormRequest
         return [
             'categories.*' => ['array:name,master_category_name,master_category_id', 'required'],
             'categories.*.name' => ['required', 'string'],
+            'budget_id' => ['required', 'string'],
             'categories.*.master_category_name' => ['required_without:categories.*.master_category_id'],
             'categories.*.master_category_id' => ['required_without:categories.*.master_category_name'],
         ];

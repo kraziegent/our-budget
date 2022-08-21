@@ -2,7 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Actions\Budget;
+use App\Actions\MonthlyBudget as MonthlyBudgetAction;
+use App\Models\Budget;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -22,14 +23,18 @@ class MonthlyBudget implements ShouldQueue
     /**@var \App\Models\User */
     private $user;
 
+    /**@var \App\Models\Budget */
+    private $budget;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(User $user, Carbon $budgetmonth = null)
+    public function __construct(User $user, Budget $budget, Carbon $budgetmonth = null)
     {
         $this->user = $user;
+        $this->budget = $budget;
         $this->budgetmonth = $budgetmonth ? $budgetmonth->firstOfMonth() : now()->firstOfMonth();
     }
 
@@ -38,11 +43,11 @@ class MonthlyBudget implements ShouldQueue
      *
      * @return void
      */
-    public function handle(Budget $action)
+    public function handle(MonthlyBudgetAction $action)
     {
         $this->user->categories()->orderBy('created_at')->chunk(50, function($categories) use($action) {
             foreach($categories as $category) {
-                $action->store($this->user, $category, budgetmonth: $this->budgetmonth);
+                $action->store($this->user, $category, $this->budget, budgetmonth: $this->budgetmonth);
             }
         });
     }

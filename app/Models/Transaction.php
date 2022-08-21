@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\MoneyCast;
+use App\Enums\TransactionType;
 use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,7 @@ class Transaction extends Model
         'is_cleared',
         'transaction_date',
         'description',
+        'budget_id',
     ];
 
     /**
@@ -41,6 +43,7 @@ class Transaction extends Model
         'is_cleared' => 'boolean',
         'is_checked' => 'boolean',
         'transaction_date' => 'date',
+        'type' => TransactionType::class,
     ];
 
     /**
@@ -73,5 +76,14 @@ class Transaction extends Model
     public function payee(): BelongsTo
     {
         return $this->belongsTo(Payee::class, 'payee_id', 'uuid');
+    }
+
+
+    /**
+     * Get the budget the transaction was created.
+     */
+    public function budget(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'budget_id', 'uuid');
     }
 }

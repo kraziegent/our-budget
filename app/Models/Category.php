@@ -21,6 +21,7 @@ class Category extends Model
         'user_id',
         'name',
         'is_default',
+        'budget_id',
     ];
 
     /**
@@ -39,6 +40,14 @@ class Category extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'uuid');
+    }
+
+    /**
+     * Get the budget the category was created.
+     */
+    public function budget(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'budget_id', 'uuid');
     }
 
     /**

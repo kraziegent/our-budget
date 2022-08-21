@@ -28,6 +28,7 @@ class StoreManyRequest extends FormRequest
             'transactions.*' => ['array:category_id,account_id,amount,type,payee_id,payee_name,is_cleared,transaction_date,description', 'required'],
             'transactions.*.category_id' => ['required', 'string'],
             'transactions.*.account_id' => ['required', 'string'],
+            'budget_id' => ['required', 'string'],
             'transactions.*.amount' => ['required'],
             'transactions.*.type' => ['required', new IsAllowedTransactionType],
             'transactions.*.payee_id' => ['required_without:transactions.*.payee_name', 'string'],

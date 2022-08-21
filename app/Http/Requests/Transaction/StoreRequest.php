@@ -25,8 +25,9 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'category_id' => ['required'],
-            'account_id' => ['required'],
+            'category_id' => ['required', 'string'],
+            'account_id' => ['required', 'string'],
+            'budget_id' => ['required', 'string'],
             'amount' => ['required'],
             'type' => ['required', new IsAllowedTransactionType],
             'payee_id' => ['required_without:payee_name'],
@@ -34,6 +35,19 @@ class StoreRequest extends FormRequest
             'is_cleared' => ['sometimes', 'nullable'],
             'transaction_date' => ['sometimes', 'nullable'],
             'description' => ['sometimes', 'nullable'],
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'payee_name.required_without' => 'You must provide either a payee or the name for a new one.',
+            'payee_id.required_without' => 'You must provide either a payee or the name for a new one.',
         ];
     }
 }

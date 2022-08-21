@@ -13,11 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('budget_share', function (Blueprint $table) {
+        Schema::create('budgets', function (Blueprint $table) {
             $table->uuid()->primary();
             $table->foreignUuid('user_id')->constrained('users', 'uuid')->onDelete('cascade');
-            $table->string('email');
+            $table->string('name');
             $table->string('status');
+            $table->boolean('is_default')->default(1);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('budget_share');
+        Schema::dropIfExists('budgets');
     }
 };

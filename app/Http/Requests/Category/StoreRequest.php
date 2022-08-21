@@ -25,6 +25,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
+            'budget_id' => ['required', 'string'],
             'master_category_name' => ['required_without:master_category_id'],
             'master_category_id' => ['required_without:master_category_name'],
         ];

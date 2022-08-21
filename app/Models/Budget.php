@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-use App\Casts\MoneyCast;
 use App\Traits\Uuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\BudgetStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Budget extends Model
 {
@@ -19,10 +20,9 @@ class Budget extends Model
      * @var array<string>
      */
     protected $fillable = [
-        'category_id',
-        'budget_month',
-        'period',
-        'budgeted',
+        'name',
+        'status',
+        'is_default',
     ];
 
     /**
@@ -31,7 +31,8 @@ class Budget extends Model
      * @var array
      */
     protected $casts = [
-        'budgeted' => MoneyCast::class,
+        'is_default' => 'boolean',
+        'type' => BudgetStatus::class,
     ];
 
     /**
@@ -39,14 +40,14 @@ class Budget extends Model
      */
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'uuid');
     }
 
     /**
-     * Get the category the budget is for.
+     * Share budget with other users.
      */
-    public function category(): BelongsTo
+    public function share(): HasMany
     {
-        return $this->belongsTo(Category::class);
+        return $this->hasMany(SharedBudget::class, 'budget_id', 'uuid');
     }
 }
