@@ -3,10 +3,14 @@
 namespace Tests\Feature\Budget;
 
 use App\Enums\BudgetStatus;
+use App\Jobs\NewBudget;
 use App\Models\Budget;
+use App\Models\Category;
+use App\Models\MasterCategory;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Bus;
 
 class BudgetTest extends TestCase
 {
@@ -14,6 +18,8 @@ class BudgetTest extends TestCase
 
     public function test_budget_can_be_created_for_user()
     {
+        Bus::fake();
+
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->postJson(route('budgets.store'), [
@@ -23,6 +29,8 @@ class BudgetTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+
+        Bus::assertDispatched(NewBudget::class);
 
         $this->assertDatabaseHas('budgets', [
             'user_id' => $user->uuid,
@@ -103,5 +111,24 @@ class BudgetTest extends TestCase
             'status' => BudgetStatus::Active,
             'is_default' => true,
         ]);
+    }
+
+    public function test_new_budget_creates_defaults()
+    {
+        $user = User::factory()->create();
+        $budget = Budget::factory()->for($user, 'owner')->create(['name' => 'Budget']);
+        $mastercategory = MasterCategory::factory()->for($budget)->for($user, 'owner')->create();
+        Category::factory()->for($budget)->for($user, 'owner')->for($mastercategory, 'masterCategory')->count(3)->create();
+
+        $response = $this->actingAs($user)->postJson(route('budgets.store'), [
+            'name' => 'Second Budget',
+            'status' => BudgetStatus::Active,
+            'is_default' => true,
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseCount('categories', 6);
+        $this->assertDatabaseCount('master_categories', 2);
     }
 }

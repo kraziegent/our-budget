@@ -5,7 +5,9 @@ namespace App\Actions;
 use App\Models\User;
 use App\Enums\BudgetStatus;
 use App\Enums\SharedBudgetStatus;
+use App\Jobs\NewBudget;
 use App\Models\Budget as BudgetModel;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Validation\ValidationException;
 
 class Budget
@@ -25,6 +27,8 @@ class Budget
             'status' => $status,
             'is_default' => $is_default,
         ]);
+
+        Bus::dispatch(new NewBudget($user, $budget));
 
         return $budget;
     }
